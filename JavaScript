@@ -1,0 +1,23 @@
+// Smooth scrolling for navigation links
+document.querySelectorAll('nav a').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = document.querySelector(this.getAttribute('href'));
+        section.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// Basic form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.querySelector('input[type="text"]').value;
+    const email = document.querySelector('input[type="email"]').value;
+    const message = document.querySelector('textarea').value;
+
+    if (name && email && message) {
+        alert('Form submitted successfully!');
+        this.reset();
+    } else {
+        alert('Please fill out all fields.');
+    }
+});
