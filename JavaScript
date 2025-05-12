@@ -1,23 +1,53 @@
-// Smooth scrolling for navigation links
-document.querySelectorAll('nav a').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const section = document.querySelector(this.getAttribute('href'));
-        section.scrollIntoView({ behavior: 'smooth' });
+document.addEventListener('DOMContentLoaded', () => {
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const section = document.querySelector(targetId);
+            if (section) {
+                // Check for reduced motion preference
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                section.scrollIntoView({
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     });
-});
 
-// Basic form validation
-document.querySelector('form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.querySelector('input[type="text"]').value;
-    const email = document.querySelector('input[type="email"]').value;
-    const message = document.querySelector('textarea').value;
+    // Form validation and submission
+    const form = document.querySelector('#contact-form');
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'form-feedback';
+    form.appendChild(feedbackDiv);
 
-    if (name && email && message) {
-        alert('Form submitted successfully!');
-        this.reset();
-    } else {
-        alert('Please fill out all fields.');
-    }
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = form.querySelector('[name="name"]').value.trim();
+        const email = form.querySelector('[name="email"]').value.trim();
+        const message = form.querySelector('[name="message"]').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        feedbackDiv.textContent = '';
+        feedbackDiv.style.color = 'red';
+
+        if (!name || !email || !message) {
+            feedbackDiv.textContent = 'Please fill out all fields.';
+            return;
+        }
+
+        if (!emailRegex.test(email)) {
+            feedbackDiv.textContent = 'Please enter a valid email address.';
+            return;
+        }
+
+        feedbackDiv.style.color = 'green';
+        feedbackDiv.textContent = 'Form submitted successfully!';
+        setTimeout(() => {
+            form.reset();
+            feedbackDiv.textContent = '';
+        }, 2000);
+    });
 });
